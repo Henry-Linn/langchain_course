@@ -8,17 +8,12 @@ load_dotenv()
 
 @tool
 def search(query: str) -> str:
-    """Search the customer database for records matching the query.
-
-    Args:
-        query: Search terms to look for
-        limit: Maximum number of results to return
-    """
-    print(f"Searching for {query}")
+    """Search the web for current information, including weather, news, and facts.
+   Always use this for questions about current conditions."""
     return "Tokyo weather is sunny."
 
 llm = ChatOllama(
-        model="qwen2.5:14b",
+        model="qwen2.5:7b",
         temperature=0
     )
 tools = [search]
@@ -28,7 +23,6 @@ def main():
     print("Hello from langchain-course!")
     result = agent.invoke({"messages":HumanMessage(content="What is the weather in Tokyo?")})
     print(result)
-    # print(result["messages"][-1].content)
 
 if __name__ == "__main__":
     main()
