@@ -17,15 +17,18 @@ def search(query: str) -> str:
     print(f"Searching for {query}")
     return "Tokyo weather is sunny."
 
-llm = ChatOllama()
+llm = ChatOllama(
+        model="qwen2.5:14b",
+        temperature=0
+    )
 tools = [search]
 agent = create_agent(model=llm, tools=tools)
 
 def main():
     print("Hello from langchain-course!")
-    result = agent.invoke({"message":HumanMessage(content="What is the weather in Tokyo?")})
+    result = agent.invoke({"messages":HumanMessage(content="What is the weather in Tokyo?")})
     print(result)
-
+    # print(result["messages"][-1].content)
 
 if __name__ == "__main__":
     main()
