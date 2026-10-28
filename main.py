@@ -3,23 +3,15 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_core.messages import HumanMessage
 from langchain_ollama import ChatOllama
-from tavily import TavilyClient
-
+from langchain_tavily import TavilySearch
 load_dotenv()
-tavily = TavilyClient()
 
-@tool
-def search(query: str) -> str:
-    """Search the web for current information, including weather, news, and facts.
-   Always use this for questions about current conditions."""
-    print(f"Searching for {query}")
-    return tavily.search(query=query)
 
 llm = ChatOllama(
         model="qwen2.5:7b",
         temperature=0
     )
-tools = [search]
+tools = [TavilySearch()]
 agent = create_agent(model=llm, tools=tools)
 
 def main():
