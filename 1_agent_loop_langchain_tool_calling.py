@@ -60,7 +60,7 @@ def run_agent(question: str):
                 "4. If the user does not specify a discount tier, "
                 "ask them which tier to use — do NOT assume one.\n"
                 "5. Before EVERY tool call, write one short sentence explaining what you"
-                "are about to do and why."
+                "are about to do and why. In other words, please provide me with your chain of thoughts process."
             )
         ),
         HumanMessage(content=question),
