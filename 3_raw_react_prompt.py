@@ -11,9 +11,7 @@ from langsmith import traceable
 MAX_ITERATIONS = 10
 MODEL = "qwen3:1.7b"
 
-
 # --- Tools (LangChain @tool decorator) ---
-
 
 @traceable(run_type="tool")
 def get_product_price(product: str) -> float:
