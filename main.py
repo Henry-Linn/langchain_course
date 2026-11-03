@@ -8,18 +8,20 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
+from langchain_ollama import OllamaEmbeddings, ChatOllama
 
 load_dotenv()
 
 print("Initializing components...")
 
-embeddings = OpenAIEmbeddings()
-llm = ChatOpenAI()
+embeddings = OllamaEmbeddings(model="embeddinggemma")
+llm = ChatOllama(model="qwen3:1.7b")
 
 vectorstore = PineconeVectorStore(
     index_name=os.environ["INDEX_NAME"], embedding=embeddings
 )
 
+# searcher
 retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
 prompt_template = ChatPromptTemplate.from_template(
@@ -36,7 +38,6 @@ Provide a detailed answer:"""
 def format_docs(docs):
     """Format retrieved documents into a single string."""
     return "\n\n".join(doc.page_content for doc in docs)
-
 
 # ============================================================================
 # IMPLEMENTATION 1: Without LCEL (Simple Function-Based Approach)
@@ -61,13 +62,12 @@ def retrieval_chain_without_lcel(query: str):
 
     # Step 3: Format the prompt with context and question
     messages = prompt_template.format_messages(context=context, question=query)
-
+    
     # Step 4: Invoke LLM with the formatted messages
     response = llm.invoke(messages)
 
     # Step 5: Return the content
     return response.content
-
 
 # ============================================================================
 # IMPLEMENTATION 2: With LCEL (LangChain Expression Language) - BETTER APPROACH
@@ -87,6 +87,7 @@ def create_retrieval_chain_with_lcel():
     - Reusable: Chain can be saved, shared, and composed with other chains
     - Better debugging: LangChain provides better observability tools
     """
+    # it has to be a runnable object
     retrieval_chain = (
         RunnablePassthrough.assign(
             context=itemgetter("question") | retriever | format_docs
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("IMPLEMENTATION 0: Raw LLM Invocation (No RAG)")
     print("=" * 70)
+    # zero-shot prompting
     result_raw = llm.invoke([HumanMessage(content=query)])
     print("\nAnswer:")
     print(result_raw.content)

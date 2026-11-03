@@ -6,7 +6,7 @@ from langchain_pinecone import PineconeVectorStore
 from langchain_ollama import OllamaEmbeddings
 from pinecone import Pinecone, ServerlessSpec
 
-load_dotenv(override=True)  # .env wins over stale shell/VS Code variables
+load_dotenv()  # .env wins over stale shell/VS Code variables
 
 if __name__ == '__main__':
 
@@ -35,13 +35,13 @@ if __name__ == '__main__':
         file_path="mediumblog1.txt",
         encoding="UTF-8",
     )
+    # It is going to split the document into metadata per line.
     document = loader.load()
 
     print("splitting...")
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     texts = text_splitter.split_documents(document)
     print(f"created {len(texts)} chunks")
-
     embeddings = OllamaEmbeddings(model="embeddinggemma")
 
     print("ingesting...")
